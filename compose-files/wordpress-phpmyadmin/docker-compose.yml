@@ -1,0 +1,43 @@
+version: "3"
+services:
+  #MySQL Database image
+  cloudpro_database:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Password4MYSQL
+      MYSQL_DATABASE: cloudpro_wp_db
+      MYSQL_USER: cloudpro_wp_user
+      MYSQL_PASSWORD: Password4_wpuser
+    volumes:
+      - mysql_pv:/var/lib/mysql
+
+  #WordPress image based on Apache
+  cloudpro-wordpress:
+    depends_on:
+      - cloudpro_database
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      WORDPRESS_DB_HOST: cloudpro_database:3306
+      WORDPRESS_DB_USER: cloudpro_wp_user
+      WORDPRESS_DB_PASSWORD: Password4_wpuser
+      WORDPRESS_DB_NAME: cloudpro_wp_db
+    volumes:
+      ["./:/var/www/html"]
+
+  # phpmyadmin Dashboard image
+  cloudpro-phpmyadmin:
+    depends_on:
+      - cloudpro_database
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8099:80'
+    environment:
+      PMA_HOST: cloudpro_database
+      MYSQL_ROOT_PASSWORD: Password4MYSQL
+volumes:
+  mysql_pv: {}
