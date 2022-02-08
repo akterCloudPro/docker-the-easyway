@@ -12,6 +12,9 @@ services:
       MYSQL_PASSWORD: Password4_wpuser
     volumes:
       - mysql_pv:/var/lib/mysql
+    networks:
+      - cloudpro_wpnet
+
 
   #WordPress image based on Apache
   cloudpro-wordpress:
@@ -29,6 +32,8 @@ services:
       WORDPRESS_DB_NAME: cloudpro_wp_db
     volumes:
       ["./:/var/www/html"]
+    networks:
+      - cloudpro_wpnet
 
   # phpmyadmin Dashboard image
   cloudpro-phpmyadmin:
@@ -42,5 +47,11 @@ services:
     environment:
       PMA_HOST: cloudpro_database
       MYSQL_ROOT_PASSWORD: Password4MYSQL
+    networks:
+      - cloudpro_wpnet
+
 volumes:
   mysql_pv: {}
+
+networks:
+  cloudpro_wpnet:
